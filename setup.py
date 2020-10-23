@@ -13,10 +13,7 @@ setup(
         'License :: OSI Approved :: MIT License'
     ],
 
-    packages=['picker'],
-    package_data={
-        'picker': ['data/*.csv']
-    },
+    packages=['rofigeneric'],
     entry_points={
         'console_scripts': [
             'rofi-generic = picker.RofiGeneric:main'

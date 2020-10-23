@@ -1,6 +1,6 @@
 from subprocess import run
 
-from picker.AbstractionHelper import is_wayland, is_installed
+from rofigeneric.AbstractionHelper import is_wayland, is_installed
 
 
 class Typer:

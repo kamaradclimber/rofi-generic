@@ -1,7 +1,7 @@
 from subprocess import run
 
-from picker.AbstractionHelper import is_wayland, is_installed
-from picker.Typer import Typer
+from rofigeneric.AbstractionHelper import is_wayland, is_installed
+from rofigeneric.Typer import Typer
 
 
 class Clipboarder:
