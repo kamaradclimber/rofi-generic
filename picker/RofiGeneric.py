@@ -15,31 +15,7 @@ from picker.Clipboarder import Clipboarder
 from picker.Typer import Typer
 
 
-class Rofimoji:
-    skin_tone_selectable_emojis = {'☝', '⛹', '✊', '✋', '✌', '✍', '🎅', '🏂', '🏃', '🏄', '🏇', '🏊',
-                                   '🏋', '🏌', '👂', '👃', '👆', '👇', '👈', '👉', '👊', '👋', '👌',
-                                   '👍', '👎', '👏', '👐', '👦', '👧', '👨', '👩', '👪', '👫', '👬',
-                                   '👭', '👮', '👯', '👰', '👱', '👲', '👳', '👴', '👵', '👶', '👷',
-                                   '👸', '👼', '💁', '💂', '💃', '💅', '💆', '💇', '💏', '💑', '💪',
-                                   '🕴', '🕵', '🕺', '🖐', '🖕', '🖖', '🙅', '🙆', '🙇', '🙋', '🙌',
-                                   '🙍', '🙎', '🙏', '🚣', '🚴', '🚵', '🚶', '🛀', '🛌', '🤌', '🤏',
-                                   '🤘', '🤙', '🤚', '🤛', '🤜', '🤝', '🤞', '🤟', '🤦', '🤰', '🤱',
-                                   '🤲', '🤳', '🤴', '🤵', '🤶', '🤷', '🤸', '🤹', '🤼', '🤽', '🤾',
-                                   '🥷', '🦵', '🦶', '🦸', '🦹', '🦻', '🧍', '🧎', '🧏', '🧑', '🧒',
-                                   '🧓', '🧔', '🧕', '🧖', '🧗', '🧘', '🧙', '🧚', '🧛', '🧜', '🧝'}
-
-    fitzpatrick_modifiers = {
-        '': 'neutral',
-        '🏻': 'light skin',
-        '🏼': 'medium-light skin',
-        '🏽': 'moderate skin',
-        '🏾': 'dark brown skin',
-        '🏿': 'black skin'
-    }
-
-    fitzpatrick_modifiers_reversed = {" ".join(name.split()[:-1]): modifier for modifier, name in
-                                      fitzpatrick_modifiers.items() if name != "neutral"}
-
+class RofiGeneric:
     def __init__(self) -> None:
         self.args = self.parse_arguments()
         self.typer = Typer.best_option(self.args.typer)
@@ -75,10 +51,10 @@ class Rofimoji:
     def parse_arguments(self) -> argparse.Namespace:
         parser = configargparse.ArgumentParser(
             description='Select, insert or copy Unicode characters using rofi.',
-            default_config_files=[os.path.join(directory, 'rofimoji.rc') for directory in
+            default_config_files=[os.path.join(directory, 'rofigeneric.rc') for directory in
                                   BaseDirectory.xdg_config_dirs]
         )
-        parser.add_argument('--version', action='version', version='rofimoji 4.3.0')
+        parser.add_argument('--version', action='version', version='rofi-generic 0.1.0')
         parser.add_argument(
             '--insert-with-clipboard',
             '-p',
@@ -93,16 +69,6 @@ class Rofimoji:
             dest='copy_only',
             action='store_true',
             help='Only copy the character to the clipboard but do not insert it'
-        )
-        parser.add_argument(
-            '--skin-tone',
-            '-s',
-            dest='skin_tone',
-            action='store',
-            choices=['neutral', 'light', 'medium-light', 'moderate', 'dark brown', 'black', 'ask'],
-            default='ask',
-            help='Decide on a skin-tone for all supported emojis. If not set (or set to "ask"), '
-                 'you will be asked for each one '
         )
         parser.add_argument(
             '--files',
@@ -120,7 +86,7 @@ class Rofimoji:
             dest='prompt',
             action='store',
             default='😀 ',
-            help='Set rofimoj\'s  prompt'
+            help='Set rofi-generic\'s  prompt'
         )
         parser.add_argument(
             '--rofi-args',
@@ -135,7 +101,7 @@ class Rofimoji:
             action='store',
             type=int,
             default=10,
-            help='Show at most this number of recently used characters (cannot be larger than 10)'
+            help='Show at most this number of recently used words (cannot be larger than 10)'
         )
         parser.add_argument(
             '--clipboarder',
@@ -201,7 +167,7 @@ class Rofimoji:
 
     def load_recent_characters(self, max: int) -> List[str]:
         try:
-            with open(os.path.join(BaseDirectory.xdg_data_home, 'rofimoji', 'recent'), 'r') as file:
+            with open(os.path.join(BaseDirectory.xdg_data_home, 'rofi-generic', 'recent'), 'r') as file:
                 return file.read().strip().split('\n')[:max]
         except FileNotFoundError:
             return []
@@ -270,47 +236,11 @@ class Rofimoji:
 
         return result
 
-    def select_skin_tone(self, selected_emoji: chr) -> str:
-        skin_tone = self.args.skin_tone
-
-        if skin_tone == 'neutral':
-            return selected_emoji
-        elif skin_tone != 'ask':
-            return selected_emoji + self.fitzpatrick_modifiers_reversed[skin_tone]
-        else:
-            modified_emojis = '\n'.join(map(
-                lambda modifier: selected_emoji + modifier + " " + self.fitzpatrick_modifiers[
-                    modifier],
-                self.fitzpatrick_modifiers.keys()
-            ))
-
-            rofi_skin = run(
-                [
-                    'rofi',
-                    '-dmenu',
-                    '-i',
-                    '-p',
-                    selected_emoji + '   ',
-                    *self.args.rofi_args
-                ],
-                input=modified_emojis,
-                capture_output=True,
-                encoding='utf-8'
-            )
-
-            if rofi_skin.returncode == 1:
-                return ''
-
-            return rofi_skin.stdout.split(' ')[0]
-
-    def get_codepoints(self, char: str) -> str:
-        return '-'.join([str(hex(ord(c)))[2:] for c in char])
-
     def save_characters_to_recent_file(self, characters: str):
         max_recent_from_conf = self.args.max_recent
 
-        old_file_name = os.path.join(BaseDirectory.xdg_data_home, 'rofimoji', 'recent')
-        new_file_name = os.path.join(BaseDirectory.xdg_data_home, 'rofimoji', 'recent_temp')
+        old_file_name = os.path.join(BaseDirectory.xdg_data_home, 'rofi-generic', 'recent')
+        new_file_name = os.path.join(BaseDirectory.xdg_data_home, 'rofi-generic', 'recent_temp')
 
         max_recent = min(max_recent_from_conf, 10)
 
@@ -336,7 +266,7 @@ class Rofimoji:
         os.rename(new_file_name, old_file_name)
 
     def append_to_favorites_file(self, characters: str):
-        file_name = os.path.join(BaseDirectory.xdg_data_home, 'rofimoji', 'favorites')
+        file_name = os.path.join(BaseDirectory.xdg_data_home, 'rofi-generic', 'favorites')
 
         os.makedirs(os.path.dirname(file_name), exist_ok=True)
         with open(file_name, 'a+') as file:
@@ -357,7 +287,7 @@ class Rofimoji:
 
 
 def main():
-    Rofimoji()
+    RofiGeneric()
 
 
 if __name__ == "__main__":

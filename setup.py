@@ -1,13 +1,13 @@
 from setuptools import setup
 
 setup(
-    name='rofimoji',
-    version='4.3.0',
-    description='Simple character picker using rofi',
-    author='fdw',
-    author_email='5821180+fdw@users.noreply.github.com',
-    url='https://github.com/fdw/rofimoji',
-    keywords='rofi emoji emoji-picker picker emoticon smiley',
+    name='rofi-generic',
+    version='0.1.0',
+    description='Simple text picker using rofi',
+    author='kamaradclimber',
+    author_email='grego_rofigeneric@familleseux.net',
+    url='https://github.com/kamaradclimber/rofi-generic',
+    keywords='rofi picker rofimoji jira',
     license='MIT',
     classifiers=[
         'License :: OSI Approved :: MIT License'
@@ -19,7 +19,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'rofimoji = picker.Rofimoji:main'
+            'rofi-generic = picker.RofiGeneric:main'
         ]
     },
     install_requires=[
