@@ -16,7 +16,7 @@ setup(
     packages=['rofigeneric'],
     entry_points={
         'console_scripts': [
-            'rofi-generic = picker.RofiGeneric:main'
+            'rofi-generic = rofigeneric.RofiGeneric:main'
         ]
     },
     install_requires=[
