@@ -3,8 +3,19 @@
 If you frequently want to paste ticket IDs from a list of tickets, this project is for you.
 It tries to be generic and can take any file properly formated as input.
 
-Documentation is limited to a how-to use:
+It uses [rofi](https://github.com/DaveDavenport/rofi/) and started as a fork of [rofimoji](https://github.com/fdw/rofimoji).
 
+## Installation
+1. Clone the repo:
+```sh
+git clone https://github.com/kamaradclimber/rofi-generic.git
+```
+2. Enter the directory and install the script
+```sh
+cd rofi-generic && sudo python python.py install
+```
+
+## Usage
 ```
 rofi-generic --input-file <file>
 ```
@@ -15,7 +26,7 @@ A_WORD_THAT_WILL_PASTE anything, really any text that will be used for the searc
 A_NOTHER_WORD and some tags (label1, label2) or any free text
 ```
 
-It uses [rofi](https://github.com/DaveDavenport/rofi/) and started as a fork of [rofimoji](https://github.com/fdw/rofimoji).
+It's recommended to add the launch command to your hotkey daemon such as sxhkd.
 
 ## Insertion method
 It uses the same trick as [rofimoji](https://github.com/fdw/rofimoji), read their beautiful readme.
