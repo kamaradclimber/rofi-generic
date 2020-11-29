@@ -33,9 +33,7 @@ class RofiGeneric:
                 # for now we assume stdout is a single line
                 assert len(stdout.splitlines()) == 1
 
-                # TODO(g.seux): we can easily make extraction of the line configurable
-                #               for now we select the first word
-                output=stdout.split()[0]
+                output=stdout.split(self.args.seperator)[0]
 
                 # TODO(g.seux): deal with history
                 # self.save_characters_to_recent_file(characters)
@@ -84,6 +82,14 @@ class RofiGeneric:
             nargs='+',
             metavar='FILE',
             help='Read text from files'
+        )
+        parser.add_argument(
+            '--seperator',
+            '-s',
+            dest='seperator',
+            action='store',
+            default=" ",
+            help='Text seperator'
         )
         parser.add_argument(
             '--prompt',
